@@ -1,25 +1,35 @@
 <?php
-// Include your database connection file
-require('db.php'); // Ensure db.php sets up a MySQLi connection
+ob_start();
 
-// Handle logout
-if (isset($_POST['logout'])) {
-    session_destroy(); // Destroy the session
-    header("Location: login.php"); // Redirect to login after logout
-    exit();
-}
-
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if the user is logged in
+require('db.php');
+
+/* Handle logout */
+if (isset($_POST['logout'])) {
+    session_destroy();
+    ?>
+    <script>
+        window.location.href = 'login.php';
+    </script>
+    <?php
+    exit();
+}
+
+/* Check login */
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    ?>
+    <script>
+        window.location.href = 'login.php';
+    </script>
+    <?php
     exit();
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

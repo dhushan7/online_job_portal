@@ -1,13 +1,11 @@
 <?php
 // Include database connection
 include('db.php');
+
 // Start the session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// Include the navigation bar
-include('navbar.php');
 
 // Initialize variables
 $message = '';
@@ -74,24 +72,30 @@ if (!$result) {
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&family=Montserrat:wght@700&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Base Reset */
+        /* Base Reset & Height Inheritance Chains */
         html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
             font-family: 'Open Sans', sans-serif;
             background-color: #FAFAFA;
             color: #343a40;
         }
+        
+        /* 1. MASTER WRAPPER BOUNDARY FRAME FOR 100% VH BASELINE */
         .page-wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             box-sizing: border-box;
         }
+        
+        /* 2. FILL EMPTY TRACK SPACE TO ANCHOR THE FOOTER */
         main {
-            flex: 1;
+            flex: 1 0 auto;
             padding: 40px 20px;
         }
+        
         .container {
             max-width: 1200px;
             margin: auto;
@@ -188,7 +192,6 @@ if (!$result) {
             color: white;
         }
 
-        /* Status Message Banner Styles */
         .status-msg {
             padding: 12px;
             border-radius: 5px;
@@ -289,77 +292,79 @@ if (!$result) {
 </head>
 <body>
 
-<div class="page-wrapper">
-    <main>
-        <div class="container">
-            <h1>Manage Feedbacks</h1>
-            <a href="feedback_create.php" class="feedback-btn">Give Feedback</a>
-            
-            <?php if ($message): ?>
-                <div class="status-msg success-message"><i class="fas fa-check-circle me-2"></i><?php echo $message; ?></div>
-            <?php endif; ?>
+    <div class="page-wrapper">
 
-            <?php
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<div class='card'>";
-                    echo "<h2>" . htmlspecialchars($row['username']) . " - " . htmlspecialchars($row['company_name']) . " - " . htmlspecialchars($row['job_title']) . "</h2>";
-                    echo "<div class='rating'>" . str_repeat('<i class="fas fa-star"></i>', $row['rating']) . str_repeat('<i class="far fa-star"></i>', 5 - $row['rating']) . "</div>";
-                    echo "<p>" . htmlspecialchars($row['comments']) . "</p>";
-                    echo "<p><small class='text-muted'><i class='far fa-calendar-alt me-1'></i>Posted on: " . $row['created_at'] . "</small></p>";
-                    echo "<div class='actions'>
-                            <button class='editBtn' data-id='" . $row['feedback_id'] . "' data-username='" . htmlspecialchars($row['username']) . "' data-company='" . htmlspecialchars($row['company_name']) . "' data-job='" . htmlspecialchars($row['job_title']) . "' data-rating='" . $row['rating'] . "' data-comment='" . htmlspecialchars($row['comments']) . "'>Edit</button>
-                            <a href='?action=delete&id=" . $row['feedback_id'] . "' onclick=\"return confirm('Are you sure you want to delete this feedback?');\"><i class='fas fa-trash-alt me-1'></i>Delete</a>
-                          </div>";
-                    echo "</div>";
+        <?php include('navbar.php'); ?>
+
+        <main>
+            <div class="container">
+                <h1>Manage Feedbacks</h1>
+                <a href="feedback_create.php" class="feedback-btn">Give Feedback</a>
+                
+                <?php if ($message): ?>
+                    <div class="status-msg success-message"><i class="fas fa-check-circle me-2"></i><?php echo $message; ?></div>
+                <?php endif; ?>
+
+                <?php
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<div class='card'>";
+                        echo "<h2>" . htmlspecialchars($row['username']) . " - " . htmlspecialchars($row['company_name']) . " - " . htmlspecialchars($row['job_title']) . "</h2>";
+                        echo "<div class='rating'>" . str_repeat('<i class="fas fa-star"></i>', $row['rating']) . str_repeat('<i class="far fa-star"></i>', 5 - $row['rating']) . "</div>";
+                        echo "<p>" . htmlspecialchars($row['comments']) . "</p>";
+                        echo "<p><small class='text-muted'><i class='far fa-calendar-alt me-1'></i>Posted on: " . $row['created_at'] . "</small></p>";
+                        echo "<div class='actions'>
+                                <button class='editBtn' data-id='" . $row['feedback_id'] . "' data-username='" . htmlspecialchars($row['username']) . "' data-company='" . htmlspecialchars($row['company_name']) . "' data-job='" . htmlspecialchars($row['job_title']) . "' data-rating='" . $row['rating'] . "' data-comment='" . htmlspecialchars($row['comments']) . "'>Edit</button>
+                                <a href='?action=delete&id=" . $row['feedback_id'] . "' onclick=\"return confirm('Are you sure you want to delete this feedback?');\"><i class='fas fa-trash-alt me-1'></i>Delete</a>
+                              </div>";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p style='margin-top: 20px; color: #7f8c8d;'>No feedbacks found.</p>";
                 }
-            } else {
-                echo "<p style='margin-top: 20px; color: #7f8c8d;'>No feedbacks found.</p>";
-            }
-            ?>
-        </div>
-    </main>
+                ?>
+            </div>
+        </main>
 
-    <?php include('footer.php'); ?>
-</div>
+    </div> <?php include('footer.php'); ?>
 
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeModal">&times;</span>
-        <h2>Edit Feedback</h2>
-        <form id="editForm" method="POST">
-            <input type="hidden" id="feedback_id" name="feedback_id">
-            <div class="form-group">
-                <label for="username">User Name:</label>
-                <input type="text" id="username" name="username" required readonly style="background-color: #f8f9fa; color: #6c757d;">
-            </div>
-            <div class="form-group">
-                <label for="company">Company Name:</label>
-                <input type="text" id="company" name="company" required readonly style="background-color: #f8f9fa; color: #6c757d;">
-            </div>
-            <div class="form-group">
-                <label for="job">Job Title:</label>
-                <input type="text" id="job" name="job" required readonly style="background-color: #f8f9fa; color: #6c757d;">
-            </div>
-            <div class="form-group">
-                <label for="rating">Rating:</label>
-                <div id="starRating" class="rating" style="cursor: pointer;">
-                    <i class="far fa-star" data-value="1"></i>
-                    <i class="far fa-star" data-value="2"></i>
-                    <i class="far fa-star" data-value="3"></i>
-                    <i class="far fa-star" data-value="4"></i>
-                    <i class="far fa-star" data-value="5"></i>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Edit Feedback</h2>
+            <form id="editForm" method="POST">
+                <input type="hidden" id="feedback_id" name="feedback_id">
+                <div class="form-group">
+                    <label for="username">User Name:</label>
+                    <input type="text" id="username" name="username" required readonly style="background-color: #f8f9fa; color: #6c757d;">
                 </div>
-                <input type="hidden" id="rating" name="rating" value="1" required>
-            </div>
-            <div class="form-group">
-                <label for="comments">Comments:</label>
-                <textarea id="comments" name="comments" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="modal-submit-btn">Update Feedback</button>
-        </form>
+                <div class="form-group">
+                    <label for="company">Company Name:</label>
+                    <input type="text" id="company" name="company" required readonly style="background-color: #f8f9fa; color: #6c757d;">
+                </div>
+                <div class="form-group">
+                    <label for="job">Job Title:</label>
+                    <input type="text" id="job" name="job" required readonly style="background-color: #f8f9fa; color: #6c757d;">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <div id="starRating" class="rating" style="cursor: pointer;">
+                        <i class="far fa-star" data-value="1"></i>
+                        <i class="far fa-star" data-value="2"></i>
+                        <i class="far fa-star" data-value="3"></i>
+                        <i class="far fa-star" data-value="4"></i>
+                        <i class="far fa-star" data-value="5"></i>
+                    </div>
+                    <input type="hidden" id="rating_val" name="rating" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="comments">Comments:</label>
+                    <textarea id="comments" name="comments" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="modal-submit-btn">Update Feedback</button>
+            </form>
+        </div>
     </div>
-</div>
 
 <script>
     var modal = document.getElementById("myModal");
@@ -371,7 +376,7 @@ if (!$result) {
             document.getElementById('username').value = this.getAttribute('data-username');
             document.getElementById('company').value = this.getAttribute('data-company');
             document.getElementById('job').value = this.getAttribute('data-job');
-            document.getElementById('rating').value = this.getAttribute('data-rating');
+            document.getElementById('rating_val').value = this.getAttribute('data-rating');
             updateStars(this.getAttribute('data-rating'));
             document.getElementById('comments').value = this.getAttribute('data-comment');
             
@@ -393,7 +398,7 @@ if (!$result) {
     stars.forEach(function(star) {
         star.addEventListener('click', function() {
             var ratingValue = this.getAttribute('data-value');
-            document.getElementById('rating').value = ratingValue;
+            document.getElementById('rating_val').value = ratingValue;
             updateStars(ratingValue);
         });
     });
@@ -411,7 +416,7 @@ if (!$result) {
     }
 
     function initializeStars() {
-        var rating = document.getElementById('rating').value;
+        var rating = document.getElementById('rating_val').value;
         updateStars(rating);
     }
 

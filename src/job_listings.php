@@ -39,6 +39,7 @@ $result = $stmt->get_result();
         html, body { 
             margin: 0; 
             padding: 0; 
+            height: 100%;
             font-family: 'Open Sans', sans-serif; 
             background: #FAFAFA; 
             color: #343a40;
@@ -54,7 +55,7 @@ $result = $stmt->get_result();
 
         /* Expands vertically inside wrapper frames */
         main {
-            flex: 1; 
+            flex: 1 0 auto; 
             padding: 40px 20px;
         }
 
@@ -209,9 +210,7 @@ $result = $stmt->get_result();
             </div>
         </main>
 
-        <?php include 'footer.php'; ?>
-
-    </div> 
+    </div> <?php include 'footer.php'; ?>
 
 </body>
 </html>
