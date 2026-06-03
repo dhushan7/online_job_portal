@@ -1,17 +1,30 @@
 <?php
+ob_start();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require('db.php'); // Ensure db.php sets up a MySQLi connection
 
+require('db.php');
+
+/* Check login */
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    ?>
+    <script>
+        window.location.href = 'login.php';
+    </script>
+    <?php
     exit();
 }
 
+/* Logout */
 if (isset($_POST['logout'])) {
     session_destroy();
-    header("Location: login.php");
+    ?>
+    <script>
+        window.location.href = 'login.php';
+    </script>
+    <?php
     exit();
 }
 ?>

@@ -82,6 +82,7 @@ $result = mysqli_stmt_get_result($stmt);
         html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
             font-family: 'Open Sans', sans-serif;
             background-color: #FAFAFA;
             color: #343a40;
@@ -97,7 +98,7 @@ $result = mysqli_stmt_get_result($stmt);
 
         /* 2. FLEX AREA STRETCH FOR FORCED BOTTOM STICKY FOOTER */
         main {
-            flex: 1;
+            flex: 1 0 auto;
             padding: 40px 0;
         }
 
@@ -209,7 +210,8 @@ $result = mysqli_stmt_get_result($stmt);
                     </a>
                 </div>
 
-                <div class="row g-4"> <?php if (mysqli_num_rows($result) > 0): ?>
+                <div class="row g-4"> 
+                    <?php if (mysqli_num_rows($result) > 0): ?>
                         <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <div class="col-md-4 col-sm-6">
                                 <div class="card">
@@ -281,9 +283,7 @@ $result = mysqli_stmt_get_result($stmt);
             </div>
         </main>
 
-        <?php include('footer.php'); ?>
-
-    </div> 
+    </div> <?php include('footer.php'); ?>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -74,17 +74,37 @@ if (isset($con)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Portal - Login</title>
     <style>
+        /* Base Reset & Height Handlers */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+        }
+
         body {
             background-image: url('images/bg.jpg'); /* Replace with the path to your image */
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            font-family: 'Open Sans', sans-serif;
-            margin: 0;
-            padding: 0;
+        }
+
+        /* 1. LAYOUT BOX FORCES A MINIMUM OF 100% VH BASELINE */
+        .page-wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* 2. MAIN AREA STRETCHES TO FILL ANY EMPTY SCREEN SPACE */
+        main {
+            flex: 1 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
         }
 
         header {
@@ -94,6 +114,7 @@ if (isset($con)) {
             background: linear-gradient(135deg, #2c3e50, #0056b3);
             padding: 20px;
             color: white;
+            flex-shrink: 0;
         }
 
         header .logo {
@@ -130,14 +151,6 @@ if (isset($con)) {
         nav a:hover {
             color: #e74c3c;
             border: 2px solid #e74c3c;
-        }
-
-        #page-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1; /* Pushes the footer down naturally if content is short */
-            padding: 40px 20px;
         }
 
         .container {
@@ -211,45 +224,48 @@ if (isset($con)) {
     </style>
 </head>
 <body>
-<header>
-    <div class="logo"><img class="logo1" src="images/full_logo.png"></div>
-    <nav>
-        <ul>
-            <li><a href="register.php">Sign Up</a></li>
-            <li><a href="login.php" class="active">Sign In</a></li>
-        </ul>
-    </nav>
-</header>
 
-<div id="page-container">
-    <div class="container">
-        <form class="form" method="post" name="login">
-            <h1 class="login-title">Login</h1>
+    <div class="page-wrapper">
 
-            <div class="input-wrapper">
-                <input type="email" class="login-input" name="email" placeholder="Email Address" required>
+        <header>
+            <div class="logo"><img class="logo1" src="images/full_logo.png" alt="Logo"></div>
+            <nav>
+                <ul>
+                    <li><a href="register.php">Sign Up</a></li>
+                    <li><a href="login.php" class="active">Sign In</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="container">
+                <form class="form" method="post" name="login">
+                    <h1 class="login-title">Login</h1>
+
+                    <div class="input-wrapper">
+                        <input type="email" class="login-input" name="email" placeholder="Email Address" required>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <input type="password" class="login-input" name="password" placeholder="Password" required>
+                    </div>
+
+                    <input type="submit" value="Login" class="login-button">
+
+                    <div class="forgot-password">
+                        <a href="register.php">Don't have an account? Register</a>
+                    </div>
+                </form>
             </div>
+        </main>
 
-            <div class="input-wrapper">
-                <input type="password" class="login-input" name="password" placeholder="Password" required>
-            </div>
+    </div> <?php include 'footer.php'; ?>
 
-            <input type="submit" value="Login" class="login-button">
-
-            <div class="forgot-password">
-                <a href="register.php">Don't have an account? Register</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<?php include 'footer.php'; ?>
-
-<?php if (!empty($error)): ?>
-    <script>
-        alert("<?php echo $error; ?>");
-    </script>
-<?php endif; ?>
+    <?php if (!empty($error)): ?>
+        <script>
+            alert("<?php echo $error; ?>");
+        </script>
+    <?php endif; ?>
 
 </body>
 </html>
