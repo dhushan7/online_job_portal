@@ -99,11 +99,11 @@ Open:
 http://localhost/phpmyadmin
 
 
-- Create database:
+### Create database:
 
 online_job_portal
 
-- Import:
+### Import:
 
 database.sql
 
